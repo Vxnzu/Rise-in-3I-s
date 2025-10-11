@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Robotic Kits Components</title>
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/parts.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.6.0/css/all.min.css"
+    />
+  </head>
+  <body>
+    <section class="components-header">
+      <nav class="nav">
+        <a href="index.html" class="logo-link"
+          ><img src="./images/logo.png" alt="Rise in 3I's logo" class="logo"
+        /></a>
+        <div class="nav-links" id="navLinks">
+          <i class="fa fa-times" onclick="hideMenu()"></i>
+          <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="About.html">About</a></li>
+            <li><a href="Contact.html">Contact</a></li>
+            <li><a href="Parts.html">Parts</a></li>
+            <li><a href="games.html">Games</a></li>
+          </ul>
+        </div>
+        <i class="fa fa-bars" onclick="showMenu()"></i>
+      </nav>
+    </section>
+    <div class="container">
+      <h1>Robotics Kit Components</h1>
+      <p class="meta">
+        Browse components used in the Rise in 3I's robotics kit. Click an item
+        to view its use and purpose.
+      </p>
+
+      <div class="search" role="search">
+        <input
+          id="searchInput"
+          placeholder="Search materials (e.g. motor, sensor, battery)..."
+        />
+        <button id="clearBtn">Clear</button>
+      </div>
+
+      <section class="slider-wrap">
+        <div
+          id="slider"
+          class="slider"
+          tabindex="0"
+          aria-label="Materials slider"
+        >
+          <!-- slides inserted by JS -->
+        </div>
+      </section>
+
+      <section class="details" aria-live="polite">
+        <div class="list">
+          <h3>All components</h3>
+          <ul id="materialsList"></ul>
+        </div>
+        <aside class="info" id="detailPanel">
+          <h3 id="detailName">Select a material</h3>
+          <p id="detailPurpose">
+            Click any item in the slider or list to see the use and purpose
+            here.
+          </p>
+          <p class="meta" id="detailSpecs"></p>
+          <p class="meta">
+            <strong>Purpose:</strong>
+            <span id="detailPurposeText"
+              >(component purpose will appear here)</span
+            >
+          </p>
+        </aside>
+      </section>
+    </div>
+
+    <script>
+      const materials = [
+        {
+          id: "accelerometer",
+          name: "Accelerometer",
+          img: "./images/accelerometer.jfif",
+          use: "Detects acceleration, tilt, vibration, and movement.",
+          specs: "3-axis • Interface: I2C/SPI",
+          purpose:
+            "Measures the orientation or motion of a device (e.g., to detect if a robot is moving or falling).",
+        },
+        {
+          id: "arduino-uno",
+          name: "Arduino Uno",
+          img: "./images/Arduino.jfif",
+          use: "A microcontroller board used for building digital devices.",
+          specs: "ATmega328P • 5V logic • USB",
+          purpose:
+            " Acts as the brain of your project; processes inputs and controls outputs (motors, sensors, etc.).",
+        },
+        {
+          id: "battery-holder",
+          name: "Battery Holder",
+          img: "./images/batteryholder.jfif",
+          use: "Holds and connects batteries",
+          specs: "Holds 4x AA or 6x AAA batteries",
+          purpose: "Supplies portable power to the circuit or Arduino.",
+        },
+        {
+          id: "breadboard",
+          name: "Breadboard",
+          img: "./images/Breadboard.jfif",
+          use: "A tool for prototyping circuits without soldering.",
+          specs: "Solderless • 400+ tie points (varies)",
+          purpose:
+            "Allows easy and temporary connections of components for testing.",
+        },
+        {
+          id: "button",
+          name: "Button",
+          img: "./images/button.jfif",
+          use: "A mechanical switch that completes a circuit when pressed.",
+          specs: "Momentary • SPST",
+          purpose: "Used for user input, like starting/stopping a program.",
+        },
+        {
+          id: "caster-wheel",
+          name: "Caster wheel",
+          img: "./images/wheel.jfif",
+          use: "A free-rotating wheel used in robots.",
+          specs: "Swivel caster • Diameter varies",
+          purpose: "Provides support and mobility while allowing easy turning.",
+        },
+        {
+          id: "dc-motor",
+          name: "Dc Motor",
+          img: "./images/dcmotor.jfif",
+          use: "Converts electrical energy into rotational motion.",
+          specs: "Voltage: 3-12V • Shaft size varies",
+          purpose: "Drives wheels or parts in robots and machines.",
+        },
+        {
+          id: "dupont-connector",
+          name: "Dupont connector",
+          img: "./images/dupont.jfif",
+          use: "Pre-crimped wires used for connecting pins and headers.",
+          specs: "2.54mm pitch housings",
+          purpose: "Makes clean, easy connections between modules and boards.",
+        },
+        {
+          id: "header-pins",
+          name: "Header pin (m&f)",
+          img: "./images/headerpin.jfif",
+          use: "Connectors used to interface circuit boards and components.",
+          specs: "2.54mm pitch • male and female",
+          purpose: "Provides a way to plug and unplug wires or modules easily.",
+        },
+        {
+          id: "ir-sensor",
+          name: "Ir sensor",
+          img: "./images/irsensor.jfif",
+          use: "Detects objects or changes in light using infrared.",
+          specs: "Emitter + receiver • Analog/digital output",
+          purpose:
+            "Used for obstacle detection, line-following robots, or remote control.",
+        },
+        {
+          id: "jumper-wires",
+          name: "Jumper wires",
+          img: "./images/jumperwires.jfif",
+          use: " Wires used to make connections between breadboard and components.",
+          specs: "Male/Female/Male • 22 AWG typical",
+          purpose: "Essential for wiring up circuits in a neat, modular way.",
+        },
+        {
+          id: "photo-resistor",
+          name: "Photo resistor",
+          img: "./images/photoresistor.jfif",
+          use: "Resistor that changes resistance based on light.",
+          specs: "Analog output • Varies by model",
+          purpose:
+            "Detects light levels; used in automatic lighting systems or robots that follow light.",
+        },
+        {
+          id: "potentiometer",
+          name: "Potentiometer",
+          img: "./images/potentiometer.jfif",
+          use: "Variable resistor.",
+          specs: "10kΩ typical • Rotary",
+          purpose:
+            "Adjusts voltage manually; often used for controlling brightness, volume, or sensor thresholds",
+        },
+        {
+          id: "resistor",
+          name: "Resistor",
+          img: "./images/resistor.jfif",
+          use: "Limits the current flow in a circuit.",
+          specs: "Various values (e.g., 220Ω, 1kΩ, 10kΩ) • 1/4W",
+          purpose: "Protects components and controls signal levels.",
+        },
+        {
+          id: "servo-motor",
+          name: "Servo motor",
+          img: "./images/servomotor.jfif",
+          use: "A motor that moves to a specific angle.",
+          specs: "PWM control • Torque varies",
+          purpose:
+            "Used for precise movements (e.g., robot arms, steering mechanisms).",
+        },
+        {
+          id: "temp-sensor",
+          name: "Temperature sensor",
+          img: "./images/temperaturesensor.jfif",
+          use: "Measures temperature.",
+          specs: "LM35/DS18B20 examples",
+          purpose:
+            "Used in weather stations, thermostats, or temperature-sensitive projects.",
+        },
+        {
+          id: "terminal-block",
+          name: "Terminal block",
+          img: "./images/terminalblock.jfif",
+          use: "A connector that secures and organizes wires.",
+          specs: "Pitch: ~3.5-5.08mm • 2-4 poles",
+          purpose: "Makes reliable, semi-permanent electrical connections.",
+        },
+        {
+          id: "tilt-sensor",
+          name: "Tilt sensor",
+          img: "./images/tiltsensor.jfif",
+          use: "Detects orientation change or tilt",
+          specs: "Digital switch-type",
+          purpose:
+            " Useful in alarms, balance bots, or devices that need to know orientation.",
+        },
+        {
+          id: "ultrasonic-sensor",
+          name: "Ultrasonic sensor",
+          img: "./images/ultrasonicsensor.jfif",
+          use: "Measures distance using sound waves.",
+          specs: "Range: ~2cm-400cm • Trigger/Echo pins",
+          purpose:
+            "Used for obstacle detection, distance measurement, and robotic navigation.",
+        },
+        {
+          id: "usb",
+          name: "Usb Cable",
+          img: "./images/usb.jfif",
+          use: "Connects Arduino to a computer.",
+          specs: "USB A to Micro/Type-C depending on board",
+          purpose: "Uploads code and supplies power to the Arduino.",
+        },
+      ];
+
+      const slider = document.getElementById("slider");
+      const materialsList = document.getElementById("materialsList");
+      const detailName = document.getElementById("detailName");
+      const detailPurpose = document.getElementById("detailPurpose");
+      const detailSpecs = document.getElementById("detailSpecs");
+      const searchInput = document.getElementById("searchInput");
+      const clearBtn = document.getElementById("clearBtn");
+
+      let displayed = materials.slice();
+
+      // Render slides and list
+      function render(items) {
+        slider.innerHTML = "";
+        materialsList.innerHTML = "";
+        displayed = items.slice();
+        items.forEach((item) => {
+          const slide = document.createElement("button");
+          slide.className = "slide";
+          slide.setAttribute("data-id", item.id);
+          slide.setAttribute("tabindex", "0");
+          slide.innerHTML = `<img src="${
+            item.img || "images/ashs.jfif"
+          }" alt="${
+            item.name
+          }" onerror="this.onerror=null;this.src='images/ashs.jfif'"/><h4>${
+            item.name
+          }</h4>`;
+          slide.addEventListener("click", () => showDetail(item.id));
+          slider.appendChild(slide);
+
+          const li = document.createElement("li");
+          li.style.padding = "6px 0";
+          li.innerHTML = `<a href="#" data-id="${item.id}">${item.name}</a>`;
+          li.querySelector("a").addEventListener("click", (e) => {
+            e.preventDefault();
+            showDetail(item.id);
+          });
+          materialsList.appendChild(li);
+        });
+      }
+
+      function showDetail(id) {
+        const item =
+          materials.find((m) => m.id === id) ||
+          displayed.find((m) => m.id === id);
+        if (!item) return;
+        // highlight slide
+        document
+          .querySelectorAll(".slide")
+          .forEach((s) => s.classList.remove("active"));
+        const active = document.querySelector(`.slide[data-id="${id}"]`);
+        if (active) active.classList.add("active");
+
+        detailName.textContent = item.name;
+        detailPurpose.textContent = item.use;
+        detailSpecs.textContent = item.specs;
+
+        const purposeText = document.getElementById("detailPurposeText");
+        if (purposeText)
+          purposeText.textContent = item.purpose || item.use || "";
+
+        if (active)
+          active.scrollIntoView({ behavior: "smooth", inline: "center" });
+      }
+
+      // Search filter
+      function filter(q) {
+        const term = q.trim().toLowerCase();
+        if (!term) {
+          render(materials);
+          return;
+        }
+        const filtered = materials.filter((m) =>
+          (m.name + m.use + m.specs).toLowerCase().includes(term)
+        );
+        render(filtered);
+      }
+
+      // Keyboard navigation: left/right arrows move selection in the displayed list
+      document.addEventListener("keydown", function (e) {
+        const activeEl = document.activeElement;
+        if (
+          activeEl &&
+          (activeEl.tagName === "INPUT" || activeEl.tagName === "TEXTAREA")
+        )
+          return;
+        if (e.key === "ArrowRight" || e.key === "Right") {
+          e.preventDefault();
+          navigate(1);
+        } else if (e.key === "ArrowLeft" || e.key === "Left") {
+          e.preventDefault();
+          navigate(-1);
+        }
+      });
+
+      function navigate(offset) {
+        if (!displayed || displayed.length === 0) return;
+        const activeSlide = document.querySelector(".slide.active");
+        let idx = 0;
+        if (activeSlide) {
+          const id = activeSlide.getAttribute("data-id");
+          idx = displayed.findIndex((d) => d.id === id);
+          if (idx === -1) idx = 0;
+        }
+        idx = (idx + offset + displayed.length) % displayed.length;
+        showDetail(displayed[idx].id);
+      }
+
+      searchInput.addEventListener("input", (e) => filter(e.target.value));
+      clearBtn.addEventListener("click", () => {
+        searchInput.value = "";
+        filter("");
+        searchInput.focus();
+      });
+
+      // initial render
+      render(materials);
+    </script>
+    <!-- small menu script used by icon buttons -->
+    <script>
+      (function () {
+        const navLinks = document.getElementById("navLinks");
+        window.showMenu = function () {
+          if (navLinks) navLinks.style.right = "0";
+        };
+        window.hideMenu = function () {
+          if (navLinks) navLinks.style.right = "-200px";
+        };
+      })();
+    </script>
+  </body>
+</html>

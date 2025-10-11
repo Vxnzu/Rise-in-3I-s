@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <title>Games — Rise in 3I's</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.6.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/games.css" />
+  </head>
+  <body>
+    <section>
+      <section class="games-header">
+        <nav class="nav">
+          <a href="index.html" class="logo-link"
+            ><img src="./images/logo.png" alt="Rise in 3I's logo" class="logo"
+          /></a>
+          <div class="nav-links" id="navLinks">
+            <i class="fa fa-times" onclick="hideMenu()"></i>
+            <ul>
+              <li><a href="index.html">Home</a></li>
+              <li><a href="About.html">About</a></li>
+              <li><a href="Contact.html">Contact</a></li>
+              <li><a href="Parts.html">Parts</a></li>
+              <li><a href="games.html">Games</a></li>
+            </ul>
+          </div>
+          <i class="fa fa-bars" onclick="showMenu()"></i>
+        </nav>
+        <div class="Games-text-box">
+          <h1>Games</h1>
+          <p>
+            Enjoy these fun, educational games to learn about robotics
+            components!
+          </p>
+        </div>
+      </section>
+    </section>
+    <div class="games-container">
+      <section class="section">
+        <h2>Maze — hover to play</h2>
+        <div class="maze-wrap">
+          <div class="maze" id="maze" aria-label="Maze play area">
+            <!-- Start and finish -->
+            <div class="start" id="mazeStart">START</div>
+            <div class="finish" id="mazeFinish">FINISH</div>
+
+            <div class="robot" id="robot">🤖</div>
+
+            <div class="overlay" id="mazeOverlay"></div>
+          </div>
+
+          <div class="maze-info">
+            <p>
+              Move your cursor from <strong>START</strong> to
+              <strong>FINISH</strong> without touching the walls. Hover over
+              START to begin, then move to FINISH. If you touch a wall you must
+              restart.
+            </p>
+            <p id="mazeStatus">Status: <strong>Not started</strong></p>
+            <a class="btn" id="mazeReset">Reset</a>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <h2>Word Search — find components</h2>
+        <p>
+          Find the component names hidden in the grid (horizontal, vertical and
+          diagonal). Click and drag to select letters.
+        </p>
+        <div class="wordsearch">
+          <div
+            class="ws-grid"
+            id="wsGrid"
+            role="grid"
+            aria-label="Word search grid"
+          ></div>
+          <div class="ws-words">
+            <h3>Words</h3>
+            <ul id="wsWordsList"></ul>
+            <p id="wsFoundCount">Found 0 / 20</p>
+            <a class="btn" id="wsReset">Shuffle / Reset</a>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <script>
+      /* ---------- Maze logic ---------- */
+      (function () {
+        const maze = document.getElementById("maze");
+        const overlay = document.getElementById("mazeOverlay");
+        const start = document.getElementById("mazeStart");
+        const finish = document.getElementById("mazeFinish");
+        const status = document.getElementById("mazeStatus");
+        const resetBtn = document.getElementById("mazeReset");
+
+        let playing = false;
+        let walls = [];
+
+        function setStatus(text) {
+          status.innerHTML = "Status: <strong>" + text + "</strong>";
+        }
+
+        // grid-based maze generator (recursive backtracker)
+        function createWalls() {
+          // clear old walls
+          walls.forEach((w) => w.remove());
+          walls = [];
+
+          const W = maze.clientWidth,
+            H = maze.clientHeight;
+
+          // grid size (odd numbers create nicer mazes) - adjustable
+          const cols = 13,
+            rows = 13;
+
+          const cellSize = Math.floor(Math.min(W / cols, H / rows));
+          const wallThickness = Math.max(6, Math.floor(cellSize * 0.12));
+          const mazeWidth = cellSize * cols,
+            mazeHeight = cellSize * rows;
+          const offsetX = Math.floor((W - mazeWidth) / 2),
+            offsetY = Math.floor((H - mazeHeight) / 2);
+
+          // create cells with all walls
+          const cells = [];
+          for (let r = 0; r < rows; r++) {
+            cells[r] = [];
+            for (let c = 0; c < cols; c++) {
+              cells[r][c] = {
+                top: true,
+                right: true,
+                bottom: true,
+                left: true,
+                visited: false,
+              };
+            }
+          }
+
+          function inBounds(r, c) {
+            return r >= 0 && r < rows && c >= 0 && c < cols;
+          }
+
+          function carve(r, c) {
+            cells[r][c].visited = true;
+            const dirs = [
+              [0, 1, "right"],
+              [1, 0, "bottom"],
+              [0, -1, "left"],
+              [-1, 0, "top"],
+            ].sort(() => 0.5 - Math.random());
+            for (const [dr, dc, dir] of dirs) {
+              const nr = r + dr,
+                nc = c + dc;
+              if (!inBounds(nr, nc) || cells[nr][nc].visited) continue;
+              if (dir === "right") {
+                cells[r][c].right = false;
+                cells[nr][nc].left = false;
+              }
+              if (dir === "left") {
+                cells[r][c].left = false;
+                cells[nr][nc].right = false;
+              }
+              if (dir === "top") {
+                cells[r][c].top = false;
+                cells[nr][nc].bottom = false;
+              }
+              if (dir === "bottom") {
+                cells[r][c].bottom = false;
+                cells[nr][nc].top = false;
+              }
+              carve(nr, nc);
+            }
+          }
+
+          // carve a single maze starting from top-left
+          carve(0, 0);
+
+          // render walls: draw top and left walls for each cell (avoids duplicates)
+          for (let r = 0; r < rows; r++) {
+            for (let c = 0; c < cols; c++) {
+              const cell = cells[r][c];
+              const x = offsetX + c * cellSize;
+              const y = offsetY + r * cellSize;
+              if (cell.top) {
+                const d = document.createElement("div");
+                d.className = "wall";
+                d.style.left = x + "px";
+                d.style.top = y + "px";
+                d.style.width = cellSize + "px";
+                d.style.height = wallThickness + "px";
+                maze.appendChild(d);
+                walls.push(d);
+                d.addEventListener("mouseenter", () => {
+                  if (playing) {
+                    d.classList.add("hit");
+                    playing = false;
+                    setStatus("You hit a wall — restart");
+                  }
+                });
+              }
+              if (cell.left) {
+                const d = document.createElement("div");
+                d.className = "wall";
+                d.style.left = x + "px";
+                d.style.top = y + "px";
+                d.style.width = wallThickness + "px";
+                d.style.height = cellSize + "px";
+                maze.appendChild(d);
+                walls.push(d);
+                d.addEventListener("mouseenter", () => {
+                  if (playing) {
+                    d.classList.add("hit");
+                    playing = false;
+                    setStatus("You hit a wall — restart");
+                  }
+                });
+              }
+            }
+          }
+
+          // draw bottom border and right border for last row/col
+          for (let c = 0; c < cols; c++) {
+            const x = offsetX + c * cellSize;
+            const y = offsetY + rows * cellSize;
+            const d = document.createElement("div");
+            d.className = "wall";
+            d.style.left = x + "px";
+            d.style.top = y + "px";
+            d.style.width = cellSize + "px";
+            d.style.height = wallThickness + "px";
+            maze.appendChild(d);
+            walls.push(d);
+            d.addEventListener("mouseenter", () => {
+              if (playing) {
+                d.classList.add("hit");
+                playing = false;
+                setStatus("You hit a wall — restart");
+              }
+            });
+          }
+          for (let r = 0; r < rows; r++) {
+            const x = offsetX + cols * cellSize;
+            const y = offsetY + r * cellSize;
+            const d = document.createElement("div");
+            d.className = "wall";
+            d.style.left = x + "px";
+            d.style.top = y + "px";
+            d.style.width = wallThickness + "px";
+            d.style.height = cellSize + "px";
+            maze.appendChild(d);
+            walls.push(d);
+            d.addEventListener("mouseenter", () => {
+              if (playing) {
+                d.classList.add("hit");
+                playing = false;
+                setStatus("You hit a wall — restart");
+              }
+            });
+          }
+
+          maze._grid = {
+            rows,
+            cols,
+            cellSize,
+            wallThickness,
+            offsetX,
+            offsetY,
+          };
+        }
+
+        function resizeAndPlace() {
+          const W = maze.clientWidth,
+            H = maze.clientHeight;
+          createWalls();
+          const g = maze._grid;
+          if (g) {
+            const sw = Math.max(48, Math.floor(g.cellSize * 0.6));
+            start.style.width = sw + "px";
+            start.style.height = sw + "px";
+            start.style.left =
+              g.offsetX + Math.floor((g.cellSize - sw) / 2) + "px";
+            start.style.top =
+              g.offsetY + Math.floor((g.cellSize - sw) / 2) + "px";
+
+            finish.style.width = sw + "px";
+            finish.style.height = sw + "px";
+            finish.style.left =
+              g.offsetX +
+              (g.cols - 1) * g.cellSize +
+              Math.floor((g.cellSize - sw) / 2) +
+              "px";
+            finish.style.top =
+              g.offsetY +
+              (g.rows - 1) * g.cellSize +
+              Math.floor((g.cellSize - sw) / 2) +
+              "px";
+          }
+        }
+
+        start.addEventListener("mouseenter", () => {
+          playing = true;
+          setStatus("Playing — navigate to finish");
+          document
+            .querySelectorAll(".wall")
+            .forEach((w) => w.classList.remove("hit"));
+          robotEl.classList.remove("hit", "success");
+          robotEl.style.display = "block";
+        });
+        start.addEventListener(
+          "touchstart",
+          (e) => {
+            playing = true;
+            setStatus("Playing — navigate to finish");
+            document
+              .querySelectorAll(".wall")
+              .forEach((w) => w.classList.remove("hit"));
+            robotEl.classList.remove("hit", "success");
+            robotEl.style.display = "block";
+            e.preventDefault();
+          },
+          { passive: false }
+        );
+
+        finish.addEventListener("mouseenter", () => {
+          if (playing) {
+            playing = false;
+            setStatus("Success! You reached the finish.");
+            document
+              .querySelectorAll(".wall")
+              .forEach((w) => w.classList.remove("hit"));
+          }
+        });
+
+        maze.addEventListener(
+          "touchmove",
+          function (e) {
+            if (!playing) return;
+            const t = e.touches[0];
+            const el = document.elementFromPoint(t.clientX, t.clientY);
+            if (!el) return;
+            if (el.classList && el.classList.contains("wall")) {
+              el.classList.add("hit");
+              playing = false;
+              setStatus("You hit a wall — restart");
+              robotEl.classList.add("hit");
+              e.preventDefault();
+            }
+            if (el && el.closest && el.closest("#mazeFinish")) {
+              playing = false;
+              setStatus("Success! You reached the finish.");
+              robotEl.classList.add("success");
+              e.preventDefault();
+            }
+          },
+          { passive: false }
+        );
+
+        const robotEl = document.getElementById("robot");
+        robotEl.style.display = "none";
+        function moveRobotTo(x, y) {
+          robotEl.style.left = x + "px";
+          robotEl.style.top = y + "px";
+        }
+        maze.addEventListener("mousemove", function (e) {
+          if (!playing) return;
+          const rect = maze.getBoundingClientRect();
+          moveRobotTo(e.clientX - rect.left, e.clientY - rect.top);
+        });
+        maze.addEventListener(
+          "touchmove",
+          function (e) {
+            if (!playing) return;
+            const t = e.touches[0];
+            const rect = maze.getBoundingClientRect();
+            moveRobotTo(t.clientX - rect.left, t.clientY - rect.top);
+          },
+          { passive: false }
+        );
+        resetBtn.addEventListener("click", () => {
+          playing = false;
+          setStatus("Not started");
+          document
+            .querySelectorAll(".wall")
+            .forEach((w) => w.classList.remove("hit"));
+        });
+
+        window.addEventListener("load", resizeAndPlace);
+        window.addEventListener("resize", () => {
+          setTimeout(resizeAndPlace, 120);
+        });
+      })();
+
+      /* ---------- Word search logic ---------- */
+      (function () {
+        const words = [
+          "ACCELEROMETER",
+          "ARDUINOUNO",
+          "BATTERYHOLDER",
+          "BREADBOARD",
+          "BUTTON",
+          "CASTERWHEEL",
+          "DUPONTCONNECTOR",
+          "HEADERPINS",
+          "JUMPERWIRES",
+          "PHOTORESISTOR",
+          "POTENTIOMETER",
+          "SERVOMOTOR",
+          "TERMINALBLOCK",
+          "TILTSENSOR",
+          "ULTRASONICSENSOR",
+          "USBCABLE",
+        ];
+
+        const gridSize = 15;
+        const gridEl = document.getElementById("wsGrid");
+        const wordsListEl = document.getElementById("wsWordsList");
+        const foundCountEl = document.getElementById("wsFoundCount");
+        const resetBtn = document.getElementById("wsReset");
+
+        let grid = [];
+        let placements = [];
+        let selecting = false;
+        let selCells = [];
+
+        function makeEmptyGrid(size) {
+          const g = [];
+          for (let r = 0; r < size; r++) {
+            g[r] = [];
+            for (let c = 0; c < size; c++) g[r][c] = "";
+          }
+          return g;
+        }
+
+        function placeWords() {
+          grid = makeEmptyGrid(gridSize);
+          placements = [];
+          const directions = [
+            [0, 1],
+            [1, 0],
+            [0, -1],
+            [-1, 0],
+            [1, 1],
+            [1, -1],
+            [-1, 1],
+            [-1, -1],
+          ];
+          const shuffled = words.slice().sort(() => 0.5 - Math.random());
+          shuffled.forEach((word) => {
+            const w = word;
+            let placed = false;
+            for (let attempt = 0; attempt < 200 && !placed; attempt++) {
+              const dir =
+                directions[Math.floor(Math.random() * directions.length)];
+              const len = w.length;
+              const r0 = Math.floor(Math.random() * gridSize);
+              const c0 = Math.floor(Math.random() * gridSize);
+              const rEnd = r0 + dir[0] * (len - 1);
+              const cEnd = c0 + dir[1] * (len - 1);
+              if (rEnd < 0 || rEnd >= gridSize || cEnd < 0 || cEnd >= gridSize)
+                continue;
+
+              let ok = true;
+              const coords = [];
+              for (let i = 0; i < len; i++) {
+                const r = r0 + dir[0] * i,
+                  c = c0 + dir[1] * i;
+                const ch = grid[r][c];
+                if (ch && ch !== w[i]) {
+                  ok = false;
+                  break;
+                }
+                coords.push({ r, c });
+              }
+              if (!ok) continue;
+
+              for (let i = 0; i < len; i++) {
+                const r = r0 + dir[0] * i,
+                  c = c0 + dir[1] * i;
+                grid[r][c] = w[i];
+              }
+              placements.push({ word: w, coords: coords, found: false });
+              placed = true;
+            }
+          });
+
+          const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+          for (let r = 0; r < gridSize; r++)
+            for (let c = 0; c < gridSize; c++)
+              if (!grid[r][c])
+                grid[r][c] = letters.charAt(
+                  Math.floor(Math.random() * letters.length)
+                );
+        }
+
+        function renderGrid() {
+          gridEl.innerHTML = "";
+          for (let r = 0; r < gridSize; r++) {
+            for (let c = 0; c < gridSize; c++) {
+              const cell = document.createElement("div");
+              cell.className = "ws-cell";
+              cell.dataset.r = r;
+              cell.dataset.c = c;
+              cell.textContent = grid[r][c];
+              gridEl.appendChild(cell);
+            }
+          }
+          renderWordList();
+        }
+
+        function renderWordList() {
+          wordsListEl.innerHTML = "";
+          words.forEach((w) => {
+            const li = document.createElement("li");
+            li.textContent = w.replace(/([A-Z])/g, "$1");
+            li.id = "word-" + w;
+            wordsListEl.appendChild(li);
+          });
+          updateFoundCount();
+        }
+
+        function updateFoundCount() {
+          const found = placements.filter((p) => p.found).length;
+          foundCountEl.textContent = `Found ${found} / ${words.length}`;
+
+          placements.forEach((p) => {
+            const el = document.getElementById("word-" + p.word);
+            if (el) el.className = p.found ? "found" : "";
+          });
+        }
+
+        function coordsToKey(coords) {
+          return coords.map((o) => o.r + "," + o.c).join(";");
+        }
+
+        function tryMatchSelection(sel) {
+          const key = coordsToKey(sel);
+          for (const p of placements) {
+            const k = coordsToKey(p.coords);
+            const rev = coordsToKey(p.coords.slice().reverse());
+            if (k === key || rev === key) {
+              p.found = true;
+              markFoundCells(p.coords);
+              updateFoundCount();
+              return true;
+            }
+          }
+          return false;
+        }
+
+        function markFoundCells(coords) {
+          coords.forEach((pt) => {
+            const selector = `.ws-cell[data-r="${pt.r}"][data-c="${pt.c}"]`;
+            const el = gridEl.querySelector(selector);
+            if (el) el.classList.add("found");
+          });
+        }
+
+        // selection handling (mouse)
+        gridEl.addEventListener("mousedown", (e) => {
+          selecting = true;
+          selCells = [];
+          handleMouseOver(e);
+          e.preventDefault();
+        });
+        window.addEventListener("mouseup", (e) => {
+          if (selecting) {
+            selecting = false;
+            if (selCells.length) {
+              // try match
+              const ok = tryMatchSelection(
+                selCells.map((el) => ({
+                  r: parseInt(el.dataset.r),
+                  c: parseInt(el.dataset.c),
+                }))
+              );
+              // clear selection visuals
+              document
+                .querySelectorAll(".ws-cell.sel")
+                .forEach((c) => c.classList.remove("sel"));
+              selCells = [];
+            }
+          }
+        });
+        gridEl.addEventListener("mousemove", (e) => {
+          if (selecting) handleMouseOver(e);
+        });
+        gridEl.addEventListener(
+          "touchstart",
+          (e) => {
+            selecting = true;
+            selCells = [];
+            const t = e.touches[0];
+            const el = document.elementFromPoint(t.clientX, t.clientY);
+            if (el) handleMouseOver({ target: el });
+            e.preventDefault();
+          },
+          { passive: false }
+        );
+        gridEl.addEventListener(
+          "touchmove",
+          (e) => {
+            if (!selecting) return;
+            const t = e.touches[0];
+            const el = document.elementFromPoint(t.clientX, t.clientY);
+            if (el) handleMouseOver({ target: el });
+            e.preventDefault();
+          },
+          { passive: false }
+        );
+        window.addEventListener("touchend", (e) => {
+          if (selecting) {
+            selecting = false;
+            if (selCells.length) {
+              const ok = tryMatchSelection(
+                selCells.map((el) => ({
+                  r: parseInt(el.dataset.r),
+                  c: parseInt(el.dataset.c),
+                }))
+              );
+              document
+                .querySelectorAll(".ws-cell.sel")
+                .forEach((c) => c.classList.remove("sel"));
+              selCells = [];
+            }
+          }
+        });
+
+        function handleMouseOver(e) {
+          const target = e.target.closest(".ws-cell");
+          if (!target || selCells.indexOf(target) !== -1) return;
+          target.classList.add("sel");
+          selCells.push(target);
+        }
+
+        resetBtn.addEventListener("click", () => {
+          init();
+        });
+
+        function init() {
+          placeWords();
+          renderGrid();
+        }
+        init();
+      })();
+    </script>
+
+    <!-- JavaScript for Toggle Menu -->
+    <script>
+      const navLinks = document.getElementById("navLinks");
+      if (navLinks) {
+        function showMenu() {
+          navLinks.style.right = "0";
+        }
+        function hideMenu() {
+          navLinks.style.right = "-200px";
+        }
+      }
+    </script>
+  </body>
+</html>

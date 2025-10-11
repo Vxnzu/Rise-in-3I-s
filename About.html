@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Rise in 3I's</title>
+    <link rel="stylesheet" href="css/style.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.6.0/css/all.min.css"
+    />
+  </head>
+  <body>
+    <section class="sub-header">
+      <nav class="nav">
+        <a href="index.html" class="logo-link"
+          ><img src="./images/logo.png" alt="Rise in 3I's logo" class="logo"
+        /></a>
+        <div class="nav-links" id="navLinks">
+          <i class="fa fa-times" onclick="hideMenu()"></i>
+          <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="About.html">About</a></li>
+            <li><a href="Contact.html">Contact</a></li>
+            <li><a href="Parts.html">Parts</a></li>
+            <li><a href="games.html">Games</a></li>
+          </ul>
+        </div>
+        <i class="fa fa-bars" onclick="showMenu()"></i>
+      </nav>
+      <h1>
+        About RISE IN 3I’S: A Beginner-Centric Robotics Kit to Reduce Students’
+        Reliance on Outsourced Robot Development
+      </h1>
+    </section>
+
+    <!----Introduction-->
+    <section class="introduction">
+      <div class="row">
+        <div class="introduction-col">
+          <h1>INTRODUCTION</h1>
+          <p>
+            Welcome to our Robotics Innovation Hub! We develop robotics kits
+            designed to enhance learning, inspire creativity, and strengthen
+            local innovation. Our goal is to provide accessible and practical
+            tools that help individuals and institutions explore the world of
+            robotics while reducing dependence on outsourcing. With every kit,
+            we aim to empower future innovators to build, design, and solve
+            real-world problems through technology.
+          </p>
+        </div>
+      </div>
+    </section>
+    <!----About content-->
+    <section class="about-us">
+      <div class="row">
+        <div class="about-col">
+          <h1>Purpose</h1>
+          <p>
+            Our goal is to make robotics education and innovation accessible to
+            everyone. We aim to empower individuals and institutions to create
+            their own technological solutions instead of relying on outsourced
+            systems. Through our robotics kits, we promote hands-on learning,
+            creativity, and local innovation. We are committed to developing
+            tools that enhance skills, inspire curiosity, and build a
+            self-sustaining tech community
+          </p>
+          <a href="Contact.html" class="hero-btn red-btn">Contact Us</a>
+        </div>
+        <div class="about-col">
+          <img src="./images/hands-onlearning.jfif" alt="About Image" />
+        </div>
+      </div>
+    </section>
+
+    <!-- JavaScript for Toggle Menu -->
+    <script>
+      const navLinks = document.getElementById("navLinks");
+      if (navLinks) {
+        function showMenu() {
+          navLinks.style.right = "0";
+        }
+        function hideMenu() {
+          navLinks.style.right = "-200px";
+        }
+      }
+    </script>
+  </body>
+</html>

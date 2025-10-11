@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>All Robotic Kits</title>
+    <link rel="stylesheet" href="css/robotic kits.css" />
+    <link rel="stylesheet" href="css/style.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.6.0/css/all.min.css"
+    />
+  </head>
+  <body>
+    <section class="robots">
+      <nav class="nav">
+        <a href="index.html" class="logo-link"
+          ><img src="./images/logo.png" alt="Rise in 3I's logo" class="logo"
+        /></a>
+        <div class="nav-links" id="navLinks">
+          <i class="fa fa-times" onclick="hideMenu()"></i>
+          <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="About.html">About</a></li>
+            <li><a href="Contact.html">Contact</a></li>
+            <li><a href="Parts.html">Parts</a></li>
+            <li><a href="games.html">Games</a></li>
+          </ul>
+        </div>
+        <i class="fa fa-bars" onclick="showMenu()"></i>
+      </nav>
+      <h1>Robotic Kits</h1>
+    </section>
+
+    <div class="RK-header">
+      <h1>All Robotic Kits</h1>
+      <p>
+        Browse all available kits below. The one you selected is highlighted!
+      </p>
+    </div>
+
+    <div class="kits-container">
+      <!-- LEGO Mindstorms Kit -->
+      <div id="lego" class="kitt">
+        <h2>LEGO Mindstorms</h2>
+        <img
+          src="./images/legomindstorm.jfif"
+          alt="LEGO Mindstorms Sample Product"
+          class="kit-image"
+        />
+        <div class="kit-definition">Definition:</div>
+        <p>
+          LEGO Mindstorms is a robotics kit that combines LEGO bricks with
+          programmable sensors, motors, and a central computer brick (like the
+          EV3 or Spike Prime) to build and control robots.
+        </p>
+        <div class="kit-purpose">Purpose:</div>
+        <p>
+          It is designed for education and hobbyists to teach programming,
+          engineering, and problem-solving through hands-on robot construction,
+          often used in schools for STEM curricula.
+        </p>
+      </div>
+      <!-- VEX Robotics Kit -->
+      <div id="vex" class="kitt">
+        <h2>VEX Robotics</h2>
+        <img
+          src="./images/vex.jfif"
+          alt="VEX Robotics Sample Product"
+          class="kit-image"
+        />
+        <div class="kit-definition">Definition:</div>
+        <p>
+          VEX Robotics is a modular robotics system using metal components,
+          gears, motors, and sensors, controlled by a microcontroller like the
+          VEX IQ or VEX EDR brain.
+        </p>
+        <div class="kit-purpose">Purpose:</div>
+        <p>
+          Aimed at competitive robotics and team-based learning, it helps
+          develop skills in mechanical design, coding, and strategy, popular in
+          robotics competitions like VEX Worlds.
+        </p>
+      </div>
+      <!-- Arduino Starter Kit -->
+      <div id="arduino" class="kitt">
+        <h2>Arduino Starter Kit</h2>
+        <img
+          src="./images/arduinorobot.jfif"
+          alt="Arduino Starter Kit Sample Product"
+          class="kit-image"
+        />
+        <div class="kit-definition">Definition:</div>
+        <p>
+          Arduino kits are open-source electronic prototyping platforms based on
+          easy-to-use hardware and software. They use microcontrollers that can
+          be programmed to control sensors, lights, motors, and other
+          components.
+        </p>
+        <div class="kit-purpose">Purpose:</div>
+        <p>
+          It introduces beginners to electronics, programming (using C++-like
+          code), and IoT, ideal for prototyping robots for automation, sensing,
+          and control in DIY projects.
+        </p>
+      </div>
+      <!-- Raspberry Pi Robotics Kit -->
+      <div id="raspberry1" class="kitt">
+        <h2>Raspberry Pi Robotics Kit</h2>
+        <img
+          src="./images/raspberry.jfif"
+          alt="Raspberry Pi Robotics Kit Sample Product"
+          class="kit-image"
+        />
+        <div class="kit-definition">Definition:</div>
+        <p>
+          A Raspberry Pi Robotics Kit features a single-board computer (e.g.,
+          Raspberry Pi 4), camera module, motors, and GPIO accessories for
+          advanced robotic builds.
+        </p>
+        <div class="kit-purpose">Purpose:</div>
+        <p>
+          Focused on AI, computer vision, and complex programming (Python), it's
+          used for creating intelligent robots like autonomous vehicles or home
+          assistants in maker communities and research.
+        </p>
+      </div>
+      <!-----micro:bit-->
+      <div id="micro" class="kitt">
+        <h2>Micro:bit robotics kit</h2>
+        <img
+          src="./images/microbit.jfif"
+          alt="Micro:bit Robotics Kit Sample Product"
+          class="kit-image"
+        />
+        <div class="kit-definition">Definition:</div>
+        <p>
+          A Micro:bit Robotics Kit includes a small programmable board (the
+          Micro:bit), motors, sensors, and accessories to build simple robots
+          and interactive projects.
+        </p>
+        <div class="kit-purpose">Purpose:</div>
+        <p>
+          It is designed for beginners and young learners to explore coding
+          (using block-based or Python programming) and basic robotics concepts,
+          often used in educational settings to promote STEM skills.
+        </p>
+      </div>
+    </div>
+    <!-- JavaScript for Toggle Menu -->
+    <script>
+      const navLinks = document.getElementById("navLinks");
+      if (navLinks) {
+        function showMenu() {
+          navLinks.style.right = "0";
+        }
+        function hideMenu() {
+          navLinks.style.right = "-200px";
+        }
+      }
+    </script>
+  </body>
+</html>
