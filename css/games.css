@@ -296,16 +296,16 @@
     flex-direction: column;
     }
   }
-/* Put this at the VERY END of css/games.css (last rule wins) */
+
 body section.games-header {
   min-height: 100vh !important;
   width: 100% !important;
   position: relative !important;
-  background-color: #1a1a2e !important;  /* Fallback color to see if gradient works */
+  background-color: #1a1a2e !important;  
   background-image: linear-gradient(
     rgba(4, 9, 30, 0.7),
     rgba(4, 9, 30, 0.7)
-  ), url(../images/games-bg.jfif) !important;  /* Absolute path + !important */
+  ), url(../images/games-bg.jfif) !important;  
   background-position: center !important;
   background-size: cover !important;
   background-repeat: no-repeat !important;
